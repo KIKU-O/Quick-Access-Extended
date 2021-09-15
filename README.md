@@ -8,7 +8,7 @@ windows explorer's navigation pane.
 
 This extension was created because windows 10 doesn't provide
 a way to create second "Quick Access" panel by default.
-(Or I just didn't find a way to do so)
+(Or I just didn't find a way to do so).
 It simply creates "QAE" folder inside "Program Files (x86)"
 and stores symlinks inside. Extension should work with
 Windows 10 and above. (Tested on 18363.1679)
