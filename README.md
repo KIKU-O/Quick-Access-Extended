@@ -30,12 +30,12 @@ To uninstall extension simply use 'regsrv32 /u Quick-Access-Extended.dll' in ter
 Installing/Uninstalling may require system restart.
 (Note: Windows terminal should be opened in the dll directory.)
 
-Any problems can be resolved by deleting affected registry adresses.
-
 ## Limitations:
 
 Context symlink creation may fail due to the dll's lack of administrator priviliges. "Drag and Drop" also unavailable.
 In the case of any error, it is enough to simply delete the affected register addresses.
+
+Any problems can be resolved by deleting affected registry adresses.
 
 #### Affected Registry Adresses:
 
