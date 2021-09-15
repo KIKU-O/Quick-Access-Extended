@@ -202,10 +202,10 @@ HRESULT __stdcall DllRegisterServer(void)
 			E_UNEXPECTED; }
 
 			// Folder Path
-			const char* TPATH = DLL_QCCPATH_S.c_str();
+			const char* TPATH = DLL_QAEPATH_S.c_str();
 			if (GetFileAttributesA(TPATH) != FILE_ATTRIBUTE_DIRECTORY)
 			{
-				RESULT = _mkdir(DLL_QCCPATH_S.c_str());
+				RESULT = _mkdir(DLL_QAEPATH_S.c_str());
 				if
 				(RESULT != ERROR_SUCCESS)
 				{ return
@@ -213,7 +213,7 @@ HRESULT __stdcall DllRegisterServer(void)
 			}
 
 			RESULT = RegSetValueExW
-			(hKey, L"TargetFolderPath", 0, REG_SZ, (BYTE*)DLL_QCCPATH.c_str(), SizeInBytes(DLL_QCCPATH));
+			(hKey, L"TargetFolderPath", 0, REG_SZ, (BYTE*)DLL_QAEPATH.c_str(), SizeInBytes(DLL_QAEPATH));
 			if
 			(RESULT != ERROR_SUCCESS)
 			{ return
@@ -476,10 +476,10 @@ DllUnregisterServer
 #pragma endregion
 
 	// Folder Path
-	const char* TPATH = DLL_QCCPATH_S.c_str();
+	const char* TPATH = DLL_QAEPATH_S.c_str();
 	if (GetFileAttributesA(TPATH) == FILE_ATTRIBUTE_DIRECTORY)
 	{
-		RESULT = _rmdir(DLL_QCCPATH_S.c_str());
+		RESULT = _rmdir(DLL_QAEPATH_S.c_str());
 		if (RESULT != ERROR_SUCCESS)
 		{
 			return E_UNEXPECTED;

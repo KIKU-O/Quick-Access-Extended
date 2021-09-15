@@ -13,7 +13,7 @@ HRESULT Handler::GetCommandString(UINT_PTR idCmd, UINT uFlags, UINT* pwReserved,
 HRESULT Handler::InvokeCommand(LPCMINVOKECOMMANDINFO pici)
 {
 	std::string lpPath = pici->lpDirectory + std::string("\\");
-	std::string dllPath = DLL_QCCPATH_S.c_str() + std::string("\\");
+	std::string dllPath = DLL_QAEPATH_S.c_str() + std::string("\\");
 	if(std::filesystem::is_directory(lpPath) && std::filesystem::is_directory(dllPath))
 	{
 		try
