@@ -31,8 +31,7 @@ HRESULT Handler::InvokeCommand(LPCMINVOKECOMMANDINFO pici)
 
 HRESULT Handler::QueryContextMenu(HMENU hmenu, UINT indexMenu, UINT idCmdFirst, UINT idCmdLast, UINT uFlags)
 {
-	if
-	(uFlags & CMF_DEFAULTONLY)
+	if (uFlags & CMF_DEFAULTONLY)
 	{
 		return MAKE_HRESULT(SEVERITY_SUCCESS, FACILITY_NULL, 0);
 	}
@@ -43,7 +42,7 @@ HRESULT Handler::QueryContextMenu(HMENU hmenu, UINT indexMenu, UINT idCmdFirst, 
 	ITEM.wID = idCmdFirst + 1;
 	ITEM.dwTypeData = const_cast<LPTSTR>(L"Pin to Quick Access Extended.");
 
-	if(!InsertMenuItemW(hmenu, 0, TRUE, &ITEM))
+	if (!InsertMenuItemW(hmenu, 0, TRUE, &ITEM))
 	{
 		return HRESULT_FROM_WIN32(GetLastError());
 	}
