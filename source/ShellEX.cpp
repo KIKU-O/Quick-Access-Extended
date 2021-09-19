@@ -65,64 +65,44 @@ HRESULT __stdcall DllRegisterServer(void)
 		lpSubKey = L"SOFTWARE\\Classes\\CLSID\\" + GetCLSID();
 		unsigned int RESULT = RegCreateKeyExW
 		(HKEY_LOCAL_MACHINE, lpSubKey.c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, &lpDisp);
-		if (RESULT != ERROR_SUCCESS)
-		{
-			return E_UNEXPECTED;
-		}
+		RESULT_CHECK;
 
 
 		RESULT = RegSetValueExW(hKey, NULL, 0, REG_SZ, (const BYTE*)DLL_SUBNAME.c_str(), SizeInBytes(DLL_SUBNAME));
-		if (RESULT != ERROR_SUCCESS)
-		{
-			return E_UNEXPECTED;
-		}
+		RESULT_CHECK;
 	#pragma endregion
 
 	#pragma region System Pin Key
 		// System Pin Key
 		RESULT = RegSetValueExW(hKey, L"System.IsPinnedToNameSpaceTree", 0, REG_DWORD, (const BYTE*)&DLL_SYSTEM_PIN, sizeof(DLL_SYSTEM_PIN));
-		if (RESULT != ERROR_SUCCESS)
-		{
-			return E_UNEXPECTED;
-		}
+		RESULT_CHECK;
 	#pragma endregion
 
 	#pragma region System Order Key
 		// System Order Key
 		RESULT = RegSetValueExW(hKey, L"SortOrderIndex", 0, REG_DWORD, (const BYTE*)&DLL_SYSTEM_ORDER, sizeof(DLL_SYSTEM_ORDER));
-		if (RESULT != ERROR_SUCCESS)
-		{
-			return E_UNEXPECTED;
-		}
+		RESULT_CHECK;
 	#pragma endregion
 
 	#pragma region CLSID//...
 		#pragma region ...//InProcServer32
 			// InProcServer32 Key
 			RESULT = RegCreateKeyExW(hKey, L"InProcServer32", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, &lpDisp);
-			if (RESULT != ERROR_SUCCESS)
-			{
-				return E_UNEXPECTED;
-			}
+			RESULT_CHECK;
 
 			// Default Variables
 			wchar_t buffer[MAX_PATH];
 			GetModuleFileNameW(g_hInstance, buffer, MAX_PATH);
 			std::wstring lpDllPath = std::wstring(buffer);
 			RESULT = RegSetValueExW(hKey, NULL, 0, REG_SZ, (BYTE*)lpDllPath.c_str(), SizeInBytes(lpDllPath));
-			if (RESULT != ERROR_SUCCESS)
-			{
-				return E_UNEXPECTED;
-			}
+			RESULT_CHECK;
 
 			// Threading Model
 			std::wstring apartment = L"Apartment";
 			RESULT = RegSetValueExW
 			(hKey, L"ThreadingModel", 0, REG_SZ, (BYTE*)apartment.c_str(), SizeInBytes(apartment));
-			if (RESULT != ERROR_SUCCESS)
-			{
-				return E_UNEXPECTED;
-			}
+			RESULT_CHECK;
+
 			RegCloseKey(hKey);
 		#pragma endregion
 
@@ -130,24 +110,16 @@ HRESULT __stdcall DllRegisterServer(void)
 			// Shell Folder Key (Higher)
 			RESULT = RegOpenKeyExW(HKEY_LOCAL_MACHINE, lpSubKey.c_str(), 0, KEY_ALL_ACCESS, &hKey);
 			RESULT = RegCreateKeyExW(hKey, L"ShellFolder", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, &lpDisp);
-			if (RESULT != ERROR_SUCCESS)
-			{
-				return E_UNEXPECTED;
-			}
+			RESULT_CHECK;
 
 			// Folder Value Flags Key
 			RESULT = RegSetValueExW(hKey, L"FolderValueFlags", 0, REG_DWORD, (const BYTE*)&DLL_FOLDER_FLAGS, sizeof(DLL_FOLDER_FLAGS));
-			if (RESULT != ERROR_SUCCESS)
-			{
-				return E_UNEXPECTED;
-			}
+			RESULT_CHECK;
 
 			// Folder Attributes Key
 			RESULT = RegSetValueExW(hKey, L"Attributes", 0, REG_DWORD, (const BYTE*)&DLL_SHELL_ATTRIBUTES, sizeof(DLL_SHELL_ATTRIBUTES));
-			if(RESULT != ERROR_SUCCESS)
-			{
-				return E_UNEXPECTED;
-			}
+			RESULT_CHECK;
+
 			RegCloseKey(hKey);
 		#pragma endregion
 
@@ -155,50 +127,33 @@ HRESULT __stdcall DllRegisterServer(void)
 			// Instance Folder Key (Higher)
 			RESULT = RegOpenKeyExW(HKEY_LOCAL_MACHINE, lpSubKey.c_str(), 0, KEY_ALL_ACCESS, &hKey);
 			RESULT = RegCreateKeyExW(hKey, L"Instance", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, &lpDisp);
-			if(RESULT != ERROR_SUCCESS)
-			{
-				return E_UNEXPECTED;
-			}
+			RESULT_CHECK;
 
 			// Instance CLSID Link
 			std::wstring EXTERNAL_GUID = L"{0E5AAE11-A475-4c5b-AB00-C66DE400274E}";
 			RESULT = RegSetValueExW(hKey, L"CLSID", 0, REG_SZ, (BYTE*)EXTERNAL_GUID.c_str(), SizeInBytes(EXTERNAL_GUID));
-			if (RESULT != ERROR_SUCCESS)
-			{
-				return E_UNEXPECTED;
-			}
+			RESULT_CHECK;
 
 		#pragma region ...//Instance//InitPropertyBag
 			// InitPropertyBag Subkey (SubHigher)
 			RESULT = RegCreateKeyExW(hKey, L"InitPropertyBag", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, &lpDisp);
-			if (RESULT != ERROR_SUCCESS)
-			{
-				return E_UNEXPECTED;
-			}
+			RESULT_CHECK;
 
 			// Folder Attribution
 			RESULT = RegSetValueExW(hKey, L"Attributes", 0, REG_DWORD, (const BYTE*)&DLL_FOLDER_ATTRIBUTE, sizeof(DLL_FOLDER_ATTRIBUTE));
-			if (RESULT != ERROR_SUCCESS)
-			{
-				return E_UNEXPECTED;
-			}
+			RESULT_CHECK;
 
 			// Folder Path
 			const char* TPATH = DLL_QAEPATH_S.c_str();
 			if (GetFileAttributesA(TPATH) != FILE_ATTRIBUTE_DIRECTORY)
 			{
 				RESULT = _mkdir(DLL_QAEPATH_S.c_str());
-				if (RESULT != ERROR_SUCCESS)
-				{
-					return E_UNEXPECTED;
-				}
+				RESULT_CHECK;
 			}
 
 			RESULT = RegSetValueExW(hKey, L"TargetFolderPath", 0, REG_SZ, (BYTE*)DLL_QAEPATH.c_str(), SizeInBytes(DLL_QAEPATH));
-			if (RESULT != ERROR_SUCCESS)
-			{
-				return E_UNEXPECTED;
-			}
+			RESULT_CHECK;
+
 			RegCloseKey(hKey);
 		#pragma endregion
 		#pragma endregion
@@ -207,16 +162,11 @@ HRESULT __stdcall DllRegisterServer(void)
 			// Icon Key (Higher)
 			RESULT = RegOpenKeyExW(HKEY_LOCAL_MACHINE, lpSubKey.c_str(), 0, KEY_ALL_ACCESS, &hKey);
 			RESULT = RegCreateKeyExW(hKey, L"DefaultIcon", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, &lpDisp);
-			if (RESULT != ERROR_SUCCESS)
-			{
-				return E_UNEXPECTED;
-			}
+			RESULT_CHECK;
 
 			RESULT = RegSetValueExW(hKey, NULL, 0, REG_SZ, (BYTE*)DLL_ICONPATH.c_str(), SizeInBytes(DLL_ICONPATH));
-			if (RESULT != ERROR_SUCCESS)
-			{
-				return E_UNEXPECTED;
-			}
+			RESULT_CHECK;
+
 			RegCloseKey(hKey);
 		#pragma endregion
 	#pragma endregion
@@ -225,15 +175,9 @@ HRESULT __stdcall DllRegisterServer(void)
 		// Handler Key
 		lpSubKey = DLL_FORMAT + DLL_NAME;
 		RESULT = RegCreateKeyExW(HKEY_LOCAL_MACHINE, lpSubKey.c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, &lpDisp);
-		if (RESULT != ERROR_SUCCESS)
-		{
-			return E_UNEXPECTED;
-		}
+		RESULT_CHECK;
 		RESULT = RegSetValueExW(hKey, NULL, 0, REG_SZ, ((BYTE*)GetCLSID().c_str()), SizeInBytes(GetCLSID()));
-		if(RESULT != ERROR_SUCCESS)
-		{
-			return E_UNEXPECTED;
-		}
+		RESULT_CHECK;
 		RegCloseKey(hKey);
 	#pragma endregion
 
@@ -245,10 +189,7 @@ HRESULT __stdcall DllRegisterServer(void)
 			if (RESULT == ERROR_SUCCESS)
 			{ 
 				RegSetValueExW(hKey, GetCLSID().c_str(), 0, REG_SZ, (BYTE*)DLL_NAME.c_str(), SizeInBytes(DLL_NAME));
-				if (RESULT != ERROR_SUCCESS)
-				{
-					return E_UNEXPECTED;
-				}
+				RESULT_CHECK;
 			}
 			RegCloseKey(hKey);
 		#pragma endregion
@@ -260,10 +201,7 @@ HRESULT __stdcall DllRegisterServer(void)
 			if (RESULT == ERROR_SUCCESS)
 			{
 				RegSetValueExW(hKey, NULL, 0, REG_SZ, (BYTE*)DLL_SUBNAME.c_str(), SizeInBytes(DLL_SUBNAME));
-				if (RESULT != ERROR_SUCCESS)
-				{
-					return E_UNEXPECTED;
-				}
+				RESULT_CHECK;
 			}
 			RegCloseKey(hKey);
 		#pragma endregion
@@ -275,10 +213,7 @@ HRESULT __stdcall DllRegisterServer(void)
 			if (RESULT == ERROR_SUCCESS)
 			{
 				RESULT = RegSetValueExW(hKey, GetCLSID().c_str(), 0, REG_DWORD, (const BYTE*)&DLL_SYSTEM_GUID, sizeof(DLL_SYSTEM_GUID));
-				if (RESULT != ERROR_SUCCESS)
-				{
-					return E_UNEXPECTED;
-				}
+				RESULT_CHECK;
 			}
 			RegCloseKey(hKey);
 		#pragma endregion
@@ -304,10 +239,7 @@ DllUnregisterServer
 	if (RESULT == ERROR_SUCCESS) 
 	{
 		RESULT = RegDeleteKeyW(HKEY_LOCAL_MACHINE, lpSubKey.c_str());
-		if (RESULT != ERROR_SUCCESS)
-		{
-			return E_UNEXPECTED;
-		}
+		RESULT_CHECK;
 	
 	}
 #pragma endregion
@@ -319,10 +251,7 @@ DllUnregisterServer
 	if (RESULT == ERROR_SUCCESS)
 	{
 		RESULT = RegDeleteKeyW(HKEY_LOCAL_MACHINE, lpSubKey.c_str());
-		if (RESULT != ERROR_SUCCESS)
-		{
-			return E_UNEXPECTED;
-		}
+		RESULT_CHECK;
 	}
 	RegCloseKey(hKey);
 #pragma endregion
@@ -334,10 +263,7 @@ DllUnregisterServer
 	if (RESULT == ERROR_SUCCESS)
 	{
 		RESULT = RegDeleteKeyW(HKEY_LOCAL_MACHINE, lpSubKey.c_str());
-		if (RESULT != ERROR_SUCCESS)
-		{
-			return E_UNEXPECTED;
-		}
+		RESULT_CHECK;
 	}
 	RegCloseKey(hKey);
 #pragma endregion
@@ -349,10 +275,7 @@ DllUnregisterServer
 	if (RESULT == ERROR_SUCCESS)
 	{
 		RESULT = RegDeleteKeyW(HKEY_LOCAL_MACHINE, lpSubKey.c_str());
-		if (RESULT != ERROR_SUCCESS)
-		{
-			return E_UNEXPECTED;
-		}
+		RESULT_CHECK;
 	}
 	RegCloseKey(hKey);
 #pragma endregion
@@ -364,10 +287,7 @@ DllUnregisterServer
 	if (RESULT == ERROR_SUCCESS)
 	{
 		RESULT = RegDeleteKeyW(HKEY_LOCAL_MACHINE, lpSubKey.c_str());
-		if (RESULT != ERROR_SUCCESS)
-		{
-			return E_UNEXPECTED;
-		}
+		RESULT_CHECK;
 	}
 	RegCloseKey(hKey);
 #pragma endregion
@@ -379,10 +299,7 @@ DllUnregisterServer
 	if (RESULT == ERROR_SUCCESS)
 	{
 		RESULT = RegDeleteKey(HKEY_LOCAL_MACHINE, lpSubKey.c_str());
-		if (RESULT != ERROR_SUCCESS)
-		{
-			return E_UNEXPECTED;
-		}
+		RESULT_CHECK;
 	}
 	RegCloseKey(hKey);
 #pragma endregion
@@ -394,10 +311,7 @@ DllUnregisterServer
 	if (RESULT == ERROR_SUCCESS)
 	{
 		RESULT = RegDeleteKeyExW (HKEY_LOCAL_MACHINE, lpSubKey.c_str(), KEY_ALL_ACCESS, 0);
-		if (RESULT != ERROR_SUCCESS)
-		{
-			return E_UNEXPECTED;
-		}
+		RESULT_CHECK;
 	}
 	RegCloseKey(hKey);
 #pragma endregion
@@ -410,10 +324,7 @@ DllUnregisterServer
 	if (RESULT == ERROR_SUCCESS)
 	{
 		RESULT = RegDeleteValueW(hKey, GetCLSID().c_str());
-		if (RESULT != ERROR_SUCCESS)
-		{
-			return E_UNEXPECTED;
-		}
+		RESULT_CHECK;
 	}
 	RegCloseKey(hKey);
 #pragma endregion
@@ -424,10 +335,7 @@ DllUnregisterServer
 	if (RESULT == ERROR_SUCCESS)
 	{
 		RESULT = RegDeleteKeyW(HKEY_LOCAL_MACHINE, lpSubKey.c_str());
-		if (RESULT != ERROR_SUCCESS)
-		{
-			return E_UNEXPECTED;
-		}
+		RESULT_CHECK;
 	}
 #pragma endregion
 
@@ -436,10 +344,7 @@ DllUnregisterServer
 	if (GetFileAttributesA(TPATH) == FILE_ATTRIBUTE_DIRECTORY)
 	{
 		RESULT = _rmdir(DLL_QAEPATH_S.c_str());
-		if (RESULT != ERROR_SUCCESS)
-		{
-			return E_UNEXPECTED;
-		}
+		RESULT_CHECK;
 	}
 
 #pragma region Panel Key Deletion
@@ -449,10 +354,7 @@ DllUnregisterServer
 	if (RESULT == ERROR_SUCCESS)
 	{
 		RESULT = RegDeleteValueW(hKey, GetCLSID().c_str());
-		if (RESULT != ERROR_SUCCESS)
-		{
-			return E_UNEXPECTED;
-		}
+		RESULT_CHECK;
 	}
 	RegCloseKey(hKey);
 #pragma endregion
